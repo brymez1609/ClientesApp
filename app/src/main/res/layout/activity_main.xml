@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v4.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/swipeLayout"
+    tools:context="com.example.macminiuno.clientesapp.MainActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Crear Cliente"
+            android:id="@+id/btn_crear_cliente"
+
+            />
+        
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:orientation="horizontal"
+            android:paddingLeft="10dp"
+            android:background="@color/cardview_dark_background"
+            >
+            
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/cardview_light_background"
+                android:text="Nombre"
+                android:paddingLeft="10dp"
+                android:paddingTop="15dp"
+
+                />
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/cardview_light_background"
+                android:text="Alias"
+                android:paddingLeft="10dp"
+                android:paddingTop="15dp"
+
+                />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/cardview_light_background"
+                android:text="Ciudad"
+                android:paddingLeft="10dp"
+                android:paddingTop="15dp"
+
+                />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/cardview_light_background"
+                android:text="Ruta"
+                android:paddingLeft="30dp"
+                android:paddingTop="15dp"
+
+                />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/cardview_light_background"
+                android:text="N°Identificación"
+                android:paddingLeft="30dp"
+                android:paddingTop="15dp"
+
+                />
+            
+        </LinearLayout>
+
+        <ListView
+            android:id="@+id/lv_clientes"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            >
+        </ListView>
+
+        <android.support.v7.widget.RecyclerView
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/recyclerView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="3dp"
+            android:scrollbars="vertical">
+        </android.support.v7.widget.RecyclerView>
+
+
+
+
+    </LinearLayout>
+
+</android.support.v4.widget.SwipeRefreshLayout>
