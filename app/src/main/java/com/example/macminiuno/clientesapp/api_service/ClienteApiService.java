@@ -23,7 +23,10 @@ public interface ClienteApiService {
 
     @GET("api_cliente/listar_por_ruta/{pk}")
     Call<List<Cliente>> getListClientes(@Path("pk") String pk);
-
+    /*
+    @GET("api_cliente/listar_por_ruta/{pk}")
+    Call<List<CrearCliente>> clientes_to_DB(@Path("pk") String pk);
+    */
 
     @POST("api_cliente/crear/")
     @FormUrlEncoded

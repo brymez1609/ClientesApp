@@ -61,12 +61,12 @@
 
                <android.support.design.widget.TextInputEditText
 
+                   android:id="@+id/txt_clave"
                    android:layout_width="match_parent"
                    android:layout_height="wrap_content"
-                   android:textSize="20dp"
                    android:hint="Clave"
-                   android:id="@+id/txt_clave"
-                   />
+                   android:inputType="textPassword"
+                   android:textSize="20dp" />
 
            </android.support.design.widget.TextInputLayout>
 

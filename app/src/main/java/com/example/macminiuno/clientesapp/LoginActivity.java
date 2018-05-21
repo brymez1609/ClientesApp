@@ -1,6 +1,7 @@
 package com.example.macminiuno.clientesapp;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -33,8 +34,9 @@ public class LoginActivity extends AppCompatActivity {
     private Button btn_login;
     private TextInputEditText ed_clave;
     private RutaApiService rutaApiService;
-    private String mClave = "";
+    private String mClave = " ";
     private Toast toast;
+    private String myIMEI = " ";
     SharedPreferences shared_preferences;
     SharedPreferences.Editor shared_preferences_editor;
 
@@ -52,14 +54,21 @@ public class LoginActivity extends AppCompatActivity {
             txt_imei.setText("Permiso denegado");
         } else {
             Log.i("Mensaje", "Se tiene permiso!");
-            String myIMEI = Settings.Secure.getString(getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID);
+            myIMEI = Settings.Secure.getString(getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID);
             txt_imei.setText(myIMEI);
 
         }
-
+        shared_preferences = getSharedPreferences("shared_preferences",
+                MODE_PRIVATE);
+        Integer login =  shared_preferences.getInt("login", 0);
+        if(login == 1){
+            Intent intent = new Intent(getApplicationContext(),MainActivity.class);
+            startActivity(intent);
+        }
         rutaApiService = RutaClienteAPIUtils.getRutaClienteApiService();
         btn_login = findViewById(R.id.btn_login);
         ed_clave = findViewById(R.id.txt_clave);
+
         btn_login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -93,7 +102,10 @@ public class LoginActivity extends AppCompatActivity {
 
                         shared_preferences_editor = shared_preferences.edit();
                         shared_preferences_editor.putString("ruta", response.body().getRuta());
-                        shared_preferences_editor.commit();
+                        shared_preferences_editor.putString("cod_dispostivo", myIMEI);
+                        shared_preferences_editor.putString("clave", mClave);
+                        shared_preferences_editor.putInt("login", 1);
+                        shared_preferences_editor.apply();
 
                         Intent intent = new Intent(getApplicationContext(),MainActivity.class);
                         startActivity(intent);

@@ -13,8 +13,10 @@ import android.widget.Toast;
 
 import com.example.macminiuno.clientesapp.Models.Cliente;
 import com.example.macminiuno.clientesapp.Models.CrearCliente;
+import com.example.macminiuno.clientesapp.Models.IdRuta;
 import com.example.macminiuno.clientesapp.api_service.ClienteApiService;
 import com.example.macminiuno.clientesapp.retrofit.Utils.ClienteAPIUtils;
+import com.example.macminiuno.clientesapp.sqlite.ClientesDBHelper;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -25,7 +27,8 @@ public class CrearClienteActivity extends AppCompatActivity {
     private Button Btn_guardar_cliente;
     private ClienteApiService clienteApiService;
     SharedPreferences shared_preferences;
-
+    private ClientesDBHelper mClientesDBHelper;
+    private Cliente mCrearCliente;
     private TextInputEditText Txt_input_n_identificacion;
     private TextInputEditText Txt_input_nombre;
     private TextInputEditText Txt_input_apellido;
@@ -78,9 +81,56 @@ public class CrearClienteActivity extends AppCompatActivity {
                 telefono = Txt_input_telefono.getText().toString();
                 ciudad = Txt_input_ciudad.getText().toString();
 
-                GuardarCliente();
+
+                shared_preferences = getSharedPreferences("shared_preferences",
+                        MODE_PRIVATE);
+                ruta = shared_preferences.getString("ruta", "Default");
+                IdRuta idRuta = new IdRuta(Integer.parseInt(ruta),"","",false,"","",false,false,false);
+                mCrearCliente = new Cliente(
+                        idRuta,
+                        n_identificacion,
+                        nombre,
+                        apellido,
+                        alias,
+                        direccion_local,
+                        celular,
+                        telefono,
+                        ciudad,
+                        true
+                        );
+                GuardarClienteDB(mCrearCliente);
+                //GuardarCliente();
             }
         });
+
+    }
+
+    private void GuardarClienteDB(Cliente cliente){
+        mClientesDBHelper = new ClientesDBHelper(getApplicationContext());
+        String[] resultado;
+        resultado = mClientesDBHelper.saveCliente(cliente);
+        if (resultado[0].equals("Exito")){
+            Toast toast = Toast.makeText(getApplicationContext(),"Guardado con exito !"+ cliente.getIdCliente(),Toast.LENGTH_LONG);
+            toast.show();
+            startActivity(new Intent(getApplicationContext(), MainActivity.class));
+        } else {
+            try {
+                String mensaje_error = "";
+                String campo = resultado[0].replace("(", " ");
+                String codigo = resultado[1].replace(")"," ");
+                if (codigo.equals(" 2067 ")){
+                    mensaje_error = "El "+campo+"debe ser unico";
+                }
+                Toast toast =Toast.makeText(getApplicationContext(),mensaje_error,Toast.LENGTH_LONG);
+                toast.show();
+            } catch (Exception e){
+                Toast toast =Toast.makeText(getApplicationContext(),"Error al guardar en la base de datos",Toast.LENGTH_LONG);
+                toast.show();
+            }
+
+
+        }
+
 
     }
 

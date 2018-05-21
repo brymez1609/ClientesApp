@@ -16,6 +16,7 @@ public class RutaClienteAPIUtils {
     //public static final String BASE_URL = "https://sip-adsi.herokuapp.com/";
     //public static final String BASE_URL = "http://192.168.1.86:8001/";
     public static final String BASE_URL = "https://nx-next-pay.herokuapp.com/";
+    //public static final String BASE_URL = "https://next-pay.herokuapp.com/";
     //public static final String BASE_URL = "http://10.4.20.103:8000/";
 
     public static RutaApiService getRutaClienteApiService(){

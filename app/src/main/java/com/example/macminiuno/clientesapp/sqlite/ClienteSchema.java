@@ -12,8 +12,8 @@ public class ClienteSchema {
 
     public static abstract class ClientesEntry implements BaseColumns {
         public static final String TABLE_NAME ="Clientes";
-
-        public static final String ID = "idCliente";
+        public static final String API_ID_CLIENTE = "api_id_cliente";
+       // public static final String ID = "_id";
         public static final String DOCUMENTO = "documento";
         public static final String NOMBRE = "nombre";
         public static final String APELLIDO = "apellido";

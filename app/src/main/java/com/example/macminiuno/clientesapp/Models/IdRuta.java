@@ -41,9 +41,7 @@ public class IdRuta {
         return idRuta;
     }
 
-    public void setIdRuta(Integer idRuta) {
-        this.idRuta = idRuta;
-    }
+    public void setIdRuta(Integer idRuta) { this.idRuta = idRuta;}
 
     public String getNombre() {
         return nombre;
@@ -122,5 +120,17 @@ public class IdRuta {
                 ", visita=" + visita +
                 ", aperturaMulti=" + aperturaMulti +
                 '}';
+    }
+
+    public IdRuta(Integer idRuta, String nombre, String fecha, Boolean estado, String imei, String clave, Boolean permisoCreacion, Boolean visita, Boolean aperturaMulti) {
+        this.idRuta = idRuta;
+        this.nombre = nombre;
+        this.fecha = fecha;
+        this.estado = estado;
+        this.imei = imei;
+        this.clave = clave;
+        this.permisoCreacion = permisoCreacion;
+        this.visita = visita;
+        this.aperturaMulti = aperturaMulti;
     }
 }

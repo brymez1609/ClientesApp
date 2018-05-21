@@ -2,6 +2,7 @@ package com.example.macminiuno.clientesapp.Models;
 
 import android.content.ContentValues;
 
+import com.example.macminiuno.clientesapp.sqlite.ClienteSchema;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.example.macminiuno.clientesapp.sqlite.ClienteSchema.ClientesEntry;
@@ -41,6 +42,20 @@ public class Cliente {
     @SerializedName("estado")
     @Expose
     private Boolean estado;
+
+    public Cliente(IdRuta idRuta, String documento, String nombre, String apellido, String alias, String direccion, String celular, String telefono, String ciudad, Boolean estado) {
+
+        this.idRuta = idRuta;
+        this.documento = documento;
+        this.nombre = nombre;
+        this.apellido = apellido;
+        this.alias = alias;
+        this.direccion = direccion;
+        this.celular = celular;
+        this.telefono = telefono;
+        this.ciudad = ciudad;
+        this.estado = estado;
+    }
 
     public Integer getIdCliente() {
         return idCliente;
@@ -130,6 +145,20 @@ public class Cliente {
         this.estado = estado;
     }
 
+    public ContentValues toContentValues() {
+        ContentValues values = new ContentValues();
+        values.put(ClientesEntry.API_ID_CLIENTE, idCliente);
+        values.put(ClienteSchema.ClientesEntry.ID_RUTA, idRuta.getIdRuta());
+        values.put(ClienteSchema.ClientesEntry.DOCUMENTO, documento);
+        values.put(ClienteSchema.ClientesEntry.NOMBRE, nombre);
+        values.put(ClienteSchema.ClientesEntry.APELLIDO, apellido);
+        values.put(ClienteSchema.ClientesEntry.ALIAS, alias);
+        values.put(ClienteSchema.ClientesEntry.DIRECCION, direccion);
+        values.put(ClienteSchema.ClientesEntry.CELULAR, celular);
+        values.put(ClienteSchema.ClientesEntry.TELEFONO, telefono);
+        values.put(ClienteSchema.ClientesEntry.CIUDAD,ciudad);
+        return values;
+    }
 
 
     @Override

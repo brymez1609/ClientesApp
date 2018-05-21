@@ -42,8 +42,8 @@ public class CrearCliente {
     @Expose
     private Integer idRuta;
 
-    public CrearCliente(Integer idCliente, String documento, String nombre, String apellido, String alias, String direccion, String celular, String telefono, String ciudad, Boolean estado, Integer idRuta) {
-        this.idCliente = idCliente;
+    public CrearCliente(String documento, String nombre, String apellido, String alias, String direccion, String celular, String telefono, String ciudad, Boolean estado, Integer idRuta) {
+        //this.idCliente = idCliente;
         this.documento = documento;
         this.nombre = nombre;
         this.apellido = apellido;
@@ -146,7 +146,7 @@ public class CrearCliente {
 
     public ContentValues toContentValues() {
         ContentValues values = new ContentValues();
-        values.put(ClienteSchema.ClientesEntry.ID, idCliente);
+        //values.put(ClienteSchema.ClientesEntry.ID, 0);
         values.put(ClienteSchema.ClientesEntry.ID_RUTA, idRuta);
         values.put(ClienteSchema.ClientesEntry.DOCUMENTO, documento);
         values.put(ClienteSchema.ClientesEntry.NOMBRE, nombre);

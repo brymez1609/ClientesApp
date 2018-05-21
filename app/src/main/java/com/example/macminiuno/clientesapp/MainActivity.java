@@ -19,6 +19,8 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.example.macminiuno.clientesapp.Models.Cliente;
+import com.example.macminiuno.clientesapp.Models.CrearCliente;
+import com.example.macminiuno.clientesapp.Models.IdRuta;
 import com.example.macminiuno.clientesapp.api_service.ClienteApiService;
 import com.example.macminiuno.clientesapp.retrofit.Utils.ClienteAPIUtils;
 import com.example.macminiuno.clientesapp.sqlite.ClientesDBHelper;
@@ -43,8 +45,9 @@ public class MainActivity extends AppCompatActivity {
     private ListView mListClientes;
     private ClienteSQLiteAdapter mClienteSQLiteAdapter;
     private ClientesDBHelper mClientesDBHelper;
+    private List<Cliente> clientes_API = new ArrayList<Cliente>();
     SharedPreferences shared_preferences;
-
+    String ruta = "-1";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,28 +63,68 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(new Intent(getApplicationContext(), CrearClienteActivity.class));
             }
         });
+
+
+        shared_preferences = getSharedPreferences("shared_preferences",
+                MODE_PRIVATE);
+        ruta = shared_preferences.getString("ruta", "Default");
+
         swipeRefreshLayout = (SwipeRefreshLayout)findViewById(R.id.swipeLayout);
         //obtenerDatos();
-        getClientesDB();
+        //obtenerClientesDB();
+        obtenerClientesAPI();
         swipeRefreshLayout.setColorSchemeResources(R.color.cardview_shadow_end_color, R.color.colorAccent);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 swipeRefreshLayout.setRefreshing(false);
-          //      obtenerDatos();
-                getClientesDB();
+                //obtenerDatos();
+                obtenerClientesAPI();
+                sincronizar();
+
             }
         });
 
         Log.e("netHabilitada", Boolean.toString(isNetDisponible()));
         Log.e("accInternet",   Boolean.toString(isOnlineNet()));
 
-        toast =  Toast.makeText(getApplicationContext(),Boolean.toString(isNetDisponible()),Toast.LENGTH_LONG);
-        toast.show();
+       // toast =  Toast.makeText(getApplicationContext(),Boolean.toString(isNetDisponible()),Toast.LENGTH_LONG);
+       // toast.show();
 
-        toast = Toast.makeText(getApplicationContext(),Boolean.toString(isOnlineNet()),Toast.LENGTH_LONG);
-        toast.show();
+       // toast = Toast.makeText(getApplicationContext(),Boolean.toString(isOnlineNet()),Toast.LENGTH_LONG);
+       // toast.show();
 
+    }
+
+    private void sincronizar() {
+        mClientesDBHelper = new ClientesDBHelper(getApplicationContext());
+        List<Cliente> clientes_DB = db_to_list_clientes();
+        Boolean existe = false;
+        for(int i=0;i < clientes_API.size();i++){
+           for(int j=0;j<clientes_DB.size();j++){
+               if(clientes_API.get(i).getDocumento().equals(clientes_DB.get(j).getDocumento())){
+
+               } else {
+                   mClientesDBHelper.saveCliente(clientes_API.get(i));
+               }
+           }
+            if(clientes_DB.size()==0)
+                mClientesDBHelper.saveCliente(clientes_API.get(i));
+        }
+
+        for(int i=0;i < clientes_DB.size();i++){
+            for(int j=0;j<clientes_API.size();j++){
+                if(clientes_DB.get(i).getDocumento().equals(clientes_API.get(j).getDocumento())){
+
+                } else {
+                    guardarDatosAPI(clientes_DB.get(i));
+                }
+                if(clientes_API.size()==0)
+                    guardarDatosAPI(clientes_DB.get(i));
+            }
+        }
+        mListClientes.setAdapter(mClienteSQLiteAdapter);
+        cargar_clientes();
     }
 
     private boolean isNetDisponible() {
@@ -110,11 +153,6 @@ public class MainActivity extends AppCompatActivity {
         return false;
     }
 
-    private void getClientesDB(){
-        mListClientes.setAdapter(mClienteSQLiteAdapter);
-        mClientesDBHelper = new ClientesDBHelper(getApplicationContext());
-        cargar_clientes();
-    }
 
     private void cargar_clientes() {
         new ClientesLoadTask().execute();
@@ -134,15 +172,98 @@ public class MainActivity extends AppCompatActivity {
             } else {
                 // Mostrar empty state
             }
+
         }
     }
 
+    private void obtenerClientesAPI(){
+        clienteApiService.getListClientes(ruta).enqueue(new Callback<List<Cliente>>() {
+            @Override
+            public void onResponse(Call<List<Cliente>> call, Response<List<Cliente>> response) {
+                if (response.isSuccessful()){
+                    clientes_API = response.body();
+                    /*
+                    for (int i = 0;i<clientes.size();i++){
+                        Cliente cliente = clientes.get(i);
+                        try {
+
+                            //mClientesDBHelper = new ClientesDBHelper(getApplicationContext());
+                            //mClientesDBHelper.saveCliente(cliente);
+                        } catch (Exception e){
+                            Log.e(TAG, "Error " + e.getMessage());
+                        }
+                        Log.i(TAG, "Cliente " + cliente.getIdCliente());
+                    }
+                   // guardarDatosAPI();
+                   */
+
+                } else {
+                    Log.e(TAG, "onResponse " + response.errorBody());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Cliente>> call, Throwable t) {
+                Log.e(TAG, "onFailure: " + t.getMessage());
+            }
+        });
+
+    }
+
+
+
+    private void guardarDatosAPI(Cliente cliente) {
+        clienteApiService.saveCliente(cliente.getDocumento(),cliente.getNombre(),cliente.getApellido(),cliente.getAlias(),cliente.getDireccion(),cliente.getCelular(),cliente.getTelefono(),cliente.getCiudad(),true,cliente.getIdRuta().getIdRuta())
+            .enqueue(new Callback<CrearCliente>() {
+                @Override
+                public void onResponse(Call<CrearCliente> call, Response<CrearCliente> response) {
+                    if (response.isSuccessful()){
+                        Log.i(TAG, "onResponse " + response.body());
+                    } else {
+                        Log.e(TAG, "onResponse " + response.errorBody());
+                    }
+                }
+                @Override
+                public void onFailure(Call<CrearCliente> call, Throwable t) {
+                    Log.e(TAG, "onFailure: " + t.getMessage());
+
+                }
+            });
+
+    }
+    /*
+    private void guardarDatosAPI() {
+        mClientesDBHelper = new ClientesDBHelper(getApplicationContext());
+        Integer cont = 0;
+        Cursor cursor = mClientesDBHelper.getReadableDatabase().query("Clientes", null, null, null, null, null, null);
+        if (cursor.moveToFirst()){
+            do {
+                cont = cont+1;
+                clienteApiService.saveCliente(cursor.getString(2), cursor.getString(3),
+                        cursor.getString(4), cursor.getString(5), cursor.getString(6), cursor.getString(7),
+                        cursor.getString(8), cursor.getString(9), true, cursor.getInt(10))
+                        .enqueue(new Callback<CrearCliente>() {
+                            @Override
+                            public void onResponse(Call<CrearCliente> call, Response<CrearCliente> response) {
+                                if (response.isSuccessful()){
+                                    Log.i(TAG, "onResponse " + response.body());
+                                } else {
+                                    Log.e(TAG, "onResponse " + response.errorBody());
+                                }
+                            }
+                            @Override
+                            public void onFailure(Call<CrearCliente> call, Throwable t) {
+                                Log.e(TAG, "onFailure: " + t.getMessage());
+
+                            }
+                        });
+            } while(cursor.moveToNext());
+        }
+        cursor.close();
+    }
+    */
     private void obtenerDatos() {
-        Bundle bundle = getIntent().getExtras();
-        String ruta;
-        shared_preferences = getSharedPreferences("shared_preferences",
-                MODE_PRIVATE);
-        ruta = shared_preferences.getString("ruta", "Default");
+
         clienteApiService.getListClientes(ruta).enqueue(new Callback<List<Cliente>>() {
             @Override
             public void onResponse(Call<List<Cliente>> call, Response<List<Cliente>> response) {
@@ -168,5 +289,26 @@ public class MainActivity extends AppCompatActivity {
                 Log.e(TAG, "onFailure: " + t.getMessage());
             }
         });
+    }
+
+    private List<Cliente> db_to_list_clientes() {
+        Cursor cursor = mClientesDBHelper.getReadableDatabase().query("Clientes", null, null, null, null, null, null);
+        ArrayList<Cliente> resultList = new ArrayList<Cliente>();
+        while (cursor.moveToNext())
+        {
+            try
+            {
+                IdRuta idRuta = new IdRuta(Integer.parseInt(ruta),"","",false,"","",false,false,false);
+                Cliente cliente = new Cliente(idRuta, cursor.getString(2),
+                        cursor.getString(3), cursor.getString(4), cursor.getString(5), cursor.getString(6),
+                        cursor.getString(7), cursor.getString(8), cursor.getString(9),true);
+                resultList.add(cliente);
+            }
+            catch (Exception e) {
+                Log.e(TAG, "Error " + e.toString());
+            }
+        }
+        cursor.close();
+        return resultList;
     }
 }
